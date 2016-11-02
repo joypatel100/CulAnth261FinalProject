@@ -1,0 +1,39 @@
+<nav></nav>
+<md-content layout-padding>
+  <div layout="column">
+    <md-input-container>
+      <label>Title</label>
+      <input ng-model="user.title" style="width:200px">
+    </md-input-container>
+    <md-input-container>
+      <label>Author</label>
+      <input ng-model="user.author" style="width:200px">
+    </md-input-container>
+    <div layout="row" layout-align="left-center">
+      <md-input-container>
+        <label>Latitude</label>
+        <input ng-model="user.latitude" style="width:100px">
+      </md-input-container>
+      <md-input-container>
+        <label>Longitude</label>
+        <input ng-model="user.longitude" style="width:100px">
+      </md-input-container>
+      <h3 style="padding:0 2% 0 2%"> OR </h3>
+      <md-input-container>
+        <label>Address</label>
+        <input ng-model="user.address" style="width:100px">
+      </md-input-container>
+      <md-button class="md-primary" ng-click=getLatLon() style="width:100px">
+        Get Lat Lon
+      </md-button>
+    </div>
+
+    <md-input-container>
+      <label>Story</label>
+      <textarea rows=10 ng-model="user.story"></textarea>
+    </md-input-container>
+    <md-button class="md-primary" ng-click=submit() style="width:100px">
+      Submit
+    </md-button>
+  </div>
+</md-content>
