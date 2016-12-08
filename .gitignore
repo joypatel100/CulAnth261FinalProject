@@ -3,6 +3,7 @@
 /.tmp
 /.sass-cache
 /bower_components
+/app/scripts/services/config.js
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
