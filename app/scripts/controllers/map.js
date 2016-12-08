@@ -1,21 +1,36 @@
 'use strict';
 
 angular.module('projectApp')
-  .controller('MapCtrl', function ($scope) {
-    $scope.map = new google.maps.Map(document.getElementById('google_map'), {
+  .controller('MapCtrl', ['$scope', 'DBService', function($scope, DBService) {
+
+    self.markers = [];
+    self.map = new google.maps.Map(document.getElementById('google_map'), {
       center: {
         lat: 39.8282,
         lng: -98.5795
       },
       zoom: 4
     });
-    $scope.markers = [];
-    $scope.markers.push(new google.maps.Marker({
+
+    DBService.getAllStories().then(function(promise) {
+      for (var i = 0; i < promise.data.length; i++) {
+        var data = promise.data[i];
+        self.markers.push(new google.maps.Marker({
           position: {
-            lat: 39.8282,
-            lng: -98.5795
+            lat: data.latitude,
+            lng: data.longitude
           },
-          map: $scope.map
-        })
-      );
-});
+          map: self.map
+        }));
+      }
+    });
+    /*
+    $scope.markers.push(new google.maps.Marker({
+      position: {
+        lat: 39,
+        lng: -98
+      },
+      map: $scope.map
+    }));
+    */
+  }]);
