@@ -5,6 +5,24 @@ angular.module('projectApp')
     function DBService($http, $q, Config) {
       var service = {};
 
+      service.getStory = function(storyId) {
+        var deferred = $q.defer();
+        $http({
+          method: 'GET',
+          url: Config.baseUrl + 'stories?story_id=' + storyId
+        }).then(function successCallback(response) {
+          console.log(response);
+          deferred.resolve({
+            data: response.data.data[0]
+          });
+        }, function errorCallback(response) {
+          console.log(response);
+          deferred.reject();
+        });
+
+        return deferred.promise;
+      };
+
       service.getAllStories = function() {
         var deferred = $q.defer();
         $http({
@@ -16,6 +34,7 @@ angular.module('projectApp')
             });
           },
           function errorCallback(response) {
+            console.log(response);
             deferred.reject();
           });
         return deferred.promise;
@@ -23,7 +42,7 @@ angular.module('projectApp')
 
       service.createStory = function(story) {
         var deferred = $q.defer();
-
+        console.log(story);
         $http({
           method: 'POST',
           url: Config.baseUrl + 'stories',
@@ -39,10 +58,15 @@ angular.module('projectApp')
             story: story.story
           }
         }).then(function successCallback(response) {
-          console.log(response);
+          deferred.resolve({
+            storyId: response.data.story_id
+          });
         }, function errorCallback(response) {
           console.log(response);
+          deferred.reject();
         });
+
+        return deferred.promise;
       };
 
       return service;

@@ -42,7 +42,7 @@ class Stories(Resource):
 
     def get(self):
         parser = reqparse.RequestParser()
-        parser.add_argument(self.STORY_ID, required=False, type=str, location="json")
+        parser.add_argument(self.STORY_ID, required=False, type=str, location="args")
         params = parser.parse_args()
         if params[self.STORY_ID] != None:
             sql = '''
@@ -52,7 +52,7 @@ class Stories(Resource):
             '''
             sql_params = (params[self.STORY_ID],)
             suc, infos = self._query(sql, sql_params)
-            ret = {
+            return {
                 self.DATA : [{
                     self.STORY_ID : info[0],
                     self.TITLE : info[1],
@@ -91,6 +91,7 @@ class Stories(Resource):
         parser.add_argument(self.STORY, required=True, type=str, location="json")
         parser.add_argument(self.CATEGORY, required=True, type=str, location="json")
         params = parser.parse_args()
+        print params
         sql = '''
             INSERT INTO Stories(title, author, latitude, longitude, story, category)
             VALUES(%s, %s, %s, %s, %s, %s)
@@ -108,7 +109,8 @@ class Stories(Resource):
             self.LATITUDE : info[4],
             self.LONGITUDE : info[5],
             self.STORY : info[6],
-            self.CATEGORY : info[7]
+            self.CATEGORY : info[7],
+            'Access-Control-Allow-Headers' : 'application/json'
         }
 
     def delete(self):
@@ -130,11 +132,19 @@ def run_app():
     cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
     api = StoriesApi(app)
+    #api.decorators = [cors.crossdomain(origin='*', headers=['accept', 'Content-Type'])]
 
     api.add_resource(Stories, '/stories')
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', type=int, required=True)
     args = parser.parse_args()
+
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+        return response
     app.run(host='0.0.0.0', port=args.p, debug=True)
 
 if __name__ == '__main__':

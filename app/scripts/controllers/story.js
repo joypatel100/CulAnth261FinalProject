@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('projectApp')
-  .controller('StoryCtrl', function($scope, $http) {
+  .controller('StoryCtrl', ['$scope', '$http', 'DBService', function($scope, $http, DBService) {
     $scope.user = {
       title: '',
       author: '',
@@ -14,22 +14,22 @@ angular.module('projectApp')
       hideId: true
     };
     $scope.submit = function() {
-      console.log("hello");
-      console.log($scope.user);
-      $scope.user.hideId = false;
+      console.log("submit");
+      DBService.createStory($scope.user).then(function(promise) {
+        $scope.user.hideId = false;
+        $scope.user.storyId = promise.storyId;
+      });
     };
     $scope.getLatLon = function() {
       console.log("getting lat lon");
       $http({
         method: "GET",
-        url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + $scope.address
+        url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + $scope.user.address
       }).then(function successCallback(response) {
-        console.log(response);
         $scope.user.latitude = response.data.results[0].geometry.location.lat;
         $scope.user.longitude = response.data.results[0].geometry.location.lng;
-        console.log($scope);
       }, function errorCallback(response) {
-        console.log("error in address");
+        console.log(response);
       });
     };
-  });
+  }]);

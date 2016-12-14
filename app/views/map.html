@@ -1,14 +1,11 @@
 <nav></nav>
 <div id="google_map"></div>
-
-<!--<script>
-  var map;
-  function initMap() {
-    console.log("hello");
-    map = new google.maps.Map(document.getElementById('google_map'), {
-      center: {lat: -34.397, lng: 150.644},
-      zoom: 8
-    });
-    console.log("bye");
-  }
-</script>-->
+<md-content ng-hide="self.hideInfo" class="ng-hide" layout-padding>
+  <h1 class="w3-myfont">Title: {{self.title}}</h1>
+  <h3>Author: {{self.author}}</h3>
+  <h3>Date Added: {{self.dateAdded}}</h3>
+  <h3>Category: {{self.category}}</h3>
+  <p>
+    {{self.story}}
+  </p>
+</md-content>
