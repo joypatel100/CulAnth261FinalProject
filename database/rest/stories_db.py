@@ -1,10 +1,36 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 import argparse
 import os
 import psycopg2
 import psycopg2.extras
+
+class APIException(Exception):
+	status_code = 500
+
+	def __init__(self, message, status_code=500, payload=None):
+		Exception.__init__(self)
+		self.message = message
+		self.status_code = status_code
+		self.payload = payload
+
+	def to_dict(self):
+		ret = dict(self.payload) if self.payload!=None else {}
+		ret['message'] = self.message
+		return ret
+
+	def ret_json(self):
+		response = jsonify(self.to_dict())
+		response.status_code = self.status_code
+		return response
+
+def api_wrapper(func):
+    return func()
+    try:
+        return func()
+    except Exception as e:
+        return APIException(str(e)).ret_json()
 
 class StoriesApi(Api):
     pass
@@ -40,7 +66,7 @@ class Stories(Resource):
         cur.close()
         conn.close()
 
-    def get(self):
+    def _get(self):
         parser = reqparse.RequestParser()
         parser.add_argument(self.STORY_ID, required=False, type=str, location="args")
         params = parser.parse_args()
@@ -82,7 +108,10 @@ class Stories(Resource):
                     } for info in infos]
                 }
 
-    def post(self):
+    def get(self):
+        return api_wrapper(self._get)
+
+    def _post(self):
         parser = reqparse.RequestParser()
         parser.add_argument(self.TITLE, required=True, type=str, location="json")
         parser.add_argument(self.AUTHOR, required=True, type=str, location="json")
@@ -91,7 +120,6 @@ class Stories(Resource):
         parser.add_argument(self.STORY, required=True, type=str, location="json")
         parser.add_argument(self.CATEGORY, required=True, type=str, location="json")
         params = parser.parse_args()
-        print params
         sql = '''
             INSERT INTO Stories(title, author, latitude, longitude, story, category)
             VALUES(%s, %s, %s, %s, %s, %s)
@@ -113,7 +141,10 @@ class Stories(Resource):
             'Access-Control-Allow-Headers' : 'application/json'
         }
 
-    def delete(self):
+    def post(self):
+        return api_wrapper(self._post)
+
+    def _delete(self):
         parser = reqparse.RequestParser()
         parser.add_argument(self.STORY_ID, required=True, type=str, location="args")
         params = parser.parse_args()
@@ -126,6 +157,9 @@ class Stories(Resource):
         return {
             self.DATA : infos[0][0]
         }
+
+    def delete(self):
+        return api_wrapper(self._delete)
 
 def run_app():
     app = Flask(__name__)

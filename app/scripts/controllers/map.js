@@ -32,7 +32,17 @@ angular.module('projectApp')
         });
         data.marker = marker;
         self.markers.push(data);
-        //self.addMarkerListener(marker);
+        if (data.category == 'Ancestry') {
+          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+        } else if (data.category == 'Athletic Ability') {
+          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+        } else if (data.category == 'Genomics') {
+          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+        } else if (data.category == 'Intelligence') {
+          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+        } else if (data.category == 'Race') {
+          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/orange-dot.png');
+        }
       }
 
       for (var i = 0; i < self.markers.length; i++) {
@@ -46,20 +56,10 @@ angular.module('projectApp')
               self.category = promise.data.category;
               self.story = promise.data.story;
               self.hideInfo = false;
-              console.log(self);
             });
           });
         })(i);
       }
 
     });
-    /*
-    $scope.markers.push(new google.maps.Marker({
-      position: {
-        lat: 39,
-        lng: -98
-      },
-      map: $scope.map
-    }));
-    */
   }]);
