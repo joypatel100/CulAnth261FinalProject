@@ -50,12 +50,12 @@ angular.module('projectApp')
             'Content-Type': 'application/json'
           },
           data: {
-            title: story.title,
-            author: story.author,
+            title: story.title.replace(/[\u0080-\uffff]/g, ""),
+            author: story.author.replace(/[\u0080-\uffff]/g, ""),
             category: story.category,
             latitude: story.latitude,
             longitude: story.longitude,
-            story: story.story
+            story: story.story.replace(/[\u0080-\uffff]/g, "")
           }
         }).then(function successCallback(response) {
           deferred.resolve({

@@ -26,7 +26,6 @@ class APIException(Exception):
 		return response
 
 def api_wrapper(func):
-    return func()
     try:
         return func()
     except Exception as e:
