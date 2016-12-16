@@ -21,6 +21,29 @@ angular.module('projectApp')
       zoom: 4
     });
 
+    var icons = {
+      ancestry: {
+        name: 'Ancestry',
+        icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+      },
+      athleticAbility: {
+        name: 'Athletic Ability',
+        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+      },
+      genomics: {
+        name: 'Genomics',
+        icon: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+      },
+      intelligence: {
+        name: 'Intelligence',
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+      },
+      race: {
+        name: 'Race',
+        icon: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png'
+      }
+    };
+
     google.maps.event.addListener(map, 'tilesloaded', function() {
       DBService.getAllStories().then(function(promise) {
         for (var i = 0; i < promise.data.length; i++) {
@@ -34,16 +57,11 @@ angular.module('projectApp')
           });
           data.marker = marker;
           self.markers.push(data);
-          if (data.category == 'Ancestry') {
-            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
-          } else if (data.category == 'Athletic Ability') {
-            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
-          } else if (data.category == 'Genomics') {
-            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
-          } else if (data.category == 'Intelligence') {
-            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
-          } else if (data.category == 'Race') {
-            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/orange-dot.png');
+          for (var key in icons) {
+            if (data.category == icons[key].name) {
+              marker.setIcon(icons[key].icon);
+              break;
+            }
           }
         }
 
@@ -65,5 +83,17 @@ angular.module('projectApp')
         self.loadingMarkers = true;
       });
     });
+
+    var legend = document.getElementById('legend');
+    for (var key in icons) {
+      var type = icons[key];
+      var name = type.name;
+      var icon = type.icon;
+      var div = document.createElement('div');
+      div.innerHTML = '<img src="' + icon + '"> ' + name;
+      legend.appendChild(div);
+    }
+
+    self.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
 
   }]);
