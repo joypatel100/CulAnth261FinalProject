@@ -12,6 +12,7 @@ angular.module('projectApp')
     self.dateAdded = '';
     self.category = '';
     self.story = '';
+    self.loadingMarkers = false;
     self.map = new google.maps.Map(document.getElementById('google_map'), {
       center: {
         lat: 39.8282,
@@ -60,6 +61,6 @@ angular.module('projectApp')
           });
         })(i);
       }
-
+      self.loadingMarkers = true;
     });
   }]);
